@@ -1,0 +1,5 @@
+---
+- hosts: win
+  gather_facts: yes
+  roles:
+    - wsus_offline

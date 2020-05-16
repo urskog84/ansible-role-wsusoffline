@@ -1,0 +1,42 @@
+---
+- name: Ping
+  win_ping:
+
+- name: Create directory for download
+  win_file:
+    path: C:\wsusoffline\
+    state: directory
+
+- name: Download wsusoffline zip file
+  win_get_url:
+    url: "{{ wsusoffline_url }}/wsusoffline{{ wsusoffline_version }}.zip"
+    dest: "C:\\wsusoffline\\wsusoffline{{ wsusoffline_version }}.zip"
+
+- name: Unzip wsusoffline file
+  win_unzip:
+    src: "C:\\wsusoffline\\wsusoffline{{ wsusoffline_version }}.zip"
+    dest: C:\
+    delete_archive: yes
+
+- name: Download update for Windows 10
+  win_shell: DownloadUpdates.cmd w100-x64 glb
+  args:
+    chdir: C:\wsusoffline\cmd\
+    executable: cmd
+  register: win_updates
+
+- name: Create directory for wsus updates
+  win_file:
+    path: C:\wsus_updates\
+    state: directory
+
+- name: Move update to separate folder
+  win_shell: CopyToTarget.cmd w100-x64 glb "C:\wsus_updates"
+  args:
+    chdir: C:\wsusoffline\cmd\
+    executable: cmd
+  register: win_updates_move
+
+- name: update backlist KBs
+  debug: 
+    msg: "!!! TODO  !!!"
